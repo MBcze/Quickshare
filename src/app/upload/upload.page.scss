@@ -5,3 +5,24 @@
 .bold {
   font-weight: bold;
 }
+
+.center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+ion-button {
+  margin: 10px 0;
+}
+
+ion-input {
+  margin: 10px 0;
+  width: 100%;
+}
+
+.small-margin {
+  margin: 2px 0; /* Nastavení menšího marginu */
+}

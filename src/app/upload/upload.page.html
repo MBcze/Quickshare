@@ -7,6 +7,13 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <p>This is the Upload page.</p>
+<ion-content class="ion-padding">
+  <div class="center-content">
+    <ion-button expand="block" (click)="selectPhoto()">Select Photo</ion-button>
+    <p class="small-margin">Selected photo:</p>
+    <p class="small-margin" *ngIf="photoName">{{ photoName }}</p>
+    <ion-button expand="block" (click)="uploadPhoto()">Upload</ion-button>
+    <ion-input class="text-center" readonly [(ngModel)]="photoUrl" placeholder="Photo URL will appear here"></ion-input>
+    <ion-button expand="block" (click)="copyToClipboard()">Copy URL</ion-button>
+  </div>
 </ion-content>
