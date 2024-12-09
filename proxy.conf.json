@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://cloud.mbcze.local",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

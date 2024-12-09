@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonInput } from '@ionic/angular/standalone';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { isPlatform } from '@ionic/angular';
@@ -10,14 +11,14 @@ import { isPlatform } from '@ionic/angular';
   templateUrl: './upload.page.html',
   styleUrls: ['./upload.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonInput],
+  imports: [CommonModule, FormsModule, HttpClientModule, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonInput],
 })
 export class UploadPage {
   photoUrl: string = '';
   photo: any;
   photoName: string = 'none';
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   async selectPhoto() {
     if (isPlatform('hybrid')) {
@@ -52,9 +53,30 @@ export class UploadPage {
   }
 
   uploadPhoto() {
-    // Implement the logic to upload the selected photo
-    // After uploading, set the photoUrl to the URL of the uploaded photo
-    this.photoUrl = 'https://example.com/photo.jpg'; // Replace with actual URL after upload
+    if (!this.photo) {
+      console.error('No photo selected');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', this.photo, this.photoName);
+
+    const apiKey = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX';
+    const uploadUrl = `/api/?apiKey=${apiKey}`;
+
+    this.http.post(uploadUrl, formData).subscribe(
+      (response: any) => {
+        if (response.status === 'success') {
+          this.photoUrl = response.file_url;
+          console.log('File uploaded successfully:', response.file_url);
+        } else {
+          console.error('Upload failed:', response.message);
+        }
+      },
+      (error) => {
+        console.error('Upload error:', error);
+      }
+    );
   }
 
   copyToClipboard() {
