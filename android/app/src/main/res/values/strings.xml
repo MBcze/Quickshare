@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">quickshare</string>
+    <string name="title_activity_main">quickshare</string>
+    <string name="package_name">ionic.quickshare</string>
+    <string name="custom_url_scheme">ionic.quickshare</string>
+</resources>
