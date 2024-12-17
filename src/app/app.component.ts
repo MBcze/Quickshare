@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
     { title: 'History', url: '/history', icon: 'time' },
     { title: 'Settings', url: '/settings', icon: 'settings' },
   ];
-  public labels = ['Test 1', 'Test 2', 'Test 3'];
+  
 
   constructor(private storage: Storage, private appStorageService: AppStorageService) {
     addIcons({ cloudUploadOutline, cloudUploadSharp, timeOutline, timeSharp, settingsOutline, settingsSharp, starOutline, starSharp });
