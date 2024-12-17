@@ -8,5 +8,16 @@
 </ion-header>
 
 <ion-content>
-  <p>This is the History page.</p>
+  <ion-list *ngFor="let hour of groupedUploads">
+    <ion-item-divider>
+      <ion-label>{{ hour.key }}:00</ion-label>
+    </ion-item-divider>
+    <ion-item *ngFor="let upload of hour.value">
+      <ion-label>
+        <h2>{{ upload.photoName }}</h2>
+        <p>{{ upload.photoUrl }}</p>
+      </ion-label>
+      <ion-button slot="end" (click)="copyToClipboard(upload.photoUrl)">Copy</ion-button>
+    </ion-item>
+  </ion-list>
 </ion-content>
