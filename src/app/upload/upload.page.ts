@@ -7,6 +7,8 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { isPlatform } from '@ionic/angular';
 import { AppStorageService } from '../storage.service';
 import { UploadedPhoto } from '../model/uploadedphoto';
+import { environment } from '../../environments/environment'; // Import environment
+
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.page.html',
@@ -31,16 +33,25 @@ export class UploadPage {
 
   async selectPhoto() {
     if (isPlatform('hybrid')) {
-      // Použijte Capacitor Camera plugin pro mobilní zařízení
+      // Použití Capacitor Camera pluginu pro mobilní zařízení
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
-        resultType: CameraResultType.Uri,
-        source: CameraSource.Prompt, // Vyskočí dialog s výběrem zda chceme vyfotit nebo vybrat fotku
+        resultType: CameraResultType.Uri, // Vrátí URI souboru
+        source: CameraSource.Prompt, // Dialog pro výběr (kamera nebo galerie)
       });
-
-      this.photo = image;
-      this.photoName = image.path?.split('/').pop() || 'Photo';
+  
+      if (image.path) {
+        // Načtení souboru jako Blob z URI
+        const response = await fetch(image.webPath || image.path);
+        const blob = await response.blob();
+  
+        this.photo = blob; // Uložení Blob do this.photo
+        this.photoName = `photo_${new Date().getTime()}.jpg`; // Generování názvu souboru
+        console.log('Photo selected:', this.photoName, this.photo);
+      } else {
+        console.error('Failed to get image path');
+      }
     } else {
       // Použití HTML5 API pro web
       const input = document.createElement('input');
@@ -53,6 +64,7 @@ export class UploadPage {
           reader.onload = (e: any) => {
             this.photo = file;
             this.photoName = file.name;
+            console.log('Photo selected (web):', this.photoName);
           };
           reader.readAsDataURL(file);
         }
@@ -70,11 +82,11 @@ export class UploadPage {
     const formData = new FormData();
     formData.append('file', this.photo, this.photoName);
 
-    const apiKey = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-    const uploadUrl = `/api/?apiKey=${apiKey}`;
+    const apiKey = environment.apiKey; // Použití apiKey z environment
+    const uploadUrl = `${environment.apiUrl}/?apiKey=${apiKey}`; // Použití apiUrl z environment
 
-    this.http.post(uploadUrl, formData).subscribe(
-      async (response: any) => {
+    this.http.post(uploadUrl, formData).subscribe({
+      next: async (response: any) => {
         if (response.status === 'success') {
           this.photoUrl = response.file_url;
           console.log('File uploaded successfully:', response.file_url);
@@ -93,10 +105,10 @@ export class UploadPage {
           console.error('Upload failed:', response.message);
         }
       },
-      (error) => {
+      error: (error) => {
         console.error('Upload error:', error);
       }
-    );
+    });
   }
 
   copyToClipboard() {
